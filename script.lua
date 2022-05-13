@@ -1,15 +1,63 @@
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/vff1bQ9F"))()
-local Window = Library.CreateLib("vvmatthxw's hub", "Synapse")
+getgenv().Commands = {}
+getgenv().Prefix = "!" -- ONLY space out something like /e so its not like "/egoto <plrname>", Can be a word of your choice for example: ".goto <plrname>"
+getgenv().AddCommand = function(CmdName, CmdAlias, Desc, Func)
+   Commands[#Commands + 1] = {
+       ["Name"] = CmdName;
+       ["Alias"] = CmdAlias;
+       ["Description"] = Desc;
+       ["Function"] = Func;
+   }
+end
 
--- Tab
+getgenv().Search = function(CmdName)
+   for _, v in pairs(Commands) do
+       if v.Name == CmdName or table.find(v.Alias, CmdName) then  
+           return v.Function
+       end -- Find the command name and returns it Alias (second name) or just name
+   end
+end
 
-local Tab1 = Window:NewTab("Main")
-local Tab1Section = Tab1:NewSection("Some a couple tries and need full name except KillV1")
-local Tab1Section = Tab1:NewSection("Main")
+getgenv().CheckCmd = function(Cmd)
+   Cmd = string.lower(Cmd)
+   if Cmd:sub(1, #Prefix) == Prefix then
+       local args = string.split(Cmd:sub(#Prefix + 1), " ") -- Makes shit less hard
+       getgenv().CmdName = Search(table.remove(args, 1)) -- Searches for the command
+       if CmdName and args then
+           return CmdName(args) -- basically execution
+       end
+   end
+end
 
--- Buttons
-Tab1Section:NewTextBox("KillV1", "Kill players; needs tool.", function(Username)
-	local lp = game:GetService("Players").LocalPlayer
+getgenv().psearch = function(Name)
+   for _, p in pairs(game:GetService("Players"):GetPlayers()) do
+       if string.lower(string.sub(p.Name, 1, string.len(Name))) == string.lower(Name) then
+           return p -- This is a bonus for beginners
+       end
+   end
+end
+
+getgenv().Notify = function(title, text, icon, time)
+   game.StarterGui:SetCore("SendNotification",{
+       Title = title;
+       Text = text;
+       Icon = icon;
+       Duration = time;
+   }) -- This is a bonus
+end
+local LocalP = game:GetService("Players").LocalPlayer -- So i dont have to type it out
+-- Examples   Change these to what you want
+AddCommand("ws", {"walkspeed", "speed"}, "Sets Your WalkSpeed", function(args)
+   if args[1] then -- This is not neccessary
+       LocalP.Character.Humanoid.WalkSpeed = args[1]
+   end
+   Notify("zxciaz", "WalkSpeed: "..tonumber(args[1]), "", 3) -- Notifies you of the command or whatever
+end)
+
+AddCommand("kill", {"death", "vkill"}, "Teleports your to a player", function(args)
+   if args[1] then
+       local Target = psearch(args[1]) -- Im giving the player finder as a bonus lol
+       Notify("zxciaz", "Teleporting To: "..tostring(Target), "", 3)
+local lp = game:GetService("Players").LocalPlayer
  
 local function gplr(String)
 	local Found = {}
@@ -40,7 +88,7 @@ local function gplr(String)
 	return Found 
 end
 
-	local Player = gplr(Username)
+	local Player = gplr(Target)
 	if Player[1] then
 		Player = Player[1]
           LocalPlayer = game.Players.LocalPlayer
@@ -107,175 +155,8 @@ end
        end
     end
 end)
-Tab1Section:NewTextBox("Blind [FULL NAME]", "Blind players; needs tool.", function(BBUsername)
-Target = BBUsername
 
-game.Players.LocalPlayer.Character.Humanoid.Name = 1
-local l = game.Players.LocalPlayer.Character["1"]:Clone()
-l.Parent = game.Players.LocalPlayer.Character
-l.Name = "Humanoid"
-wait()
-game.Players.LocalPlayer.Character["1"]:Destroy()
-game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character
-game.Players.LocalPlayer.Character.Animate.Disabled = true
-wait()
-game.Players.LocalPlayer.Character.Animate.Disabled = false
-game.Players.LocalPlayer.Character.Humanoid.DisplayDistanceType = "None"
-for i,v in pairs(game:GetService'Players'.LocalPlayer.Backpack:GetChildren())do
-game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
-end
-wait()
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players[Target].Character.HumanoidRootPart.CFrame
-wait()
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players[Target].Character.HumanoidRootPart.CFrame
-wait()
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-100000,1000000000000000000000,-100000))
-wait()
-local prt=Instance.new("Model", workspace);
-Instance.new("Part", prt).Name="Torso";
-Instance.new("Part", prt).Name="Head";
-Instance.new("Humanoid", prt).Name="Humanoid";
-game.Players.LocalPlayer.Character=prt
+-- Checks if you chatted
+LocalP.Chatted:Connect(function(Msg)
+   CheckCmd(Msg)
 end)
-Tab1Section:NewTextBox("TeleportTo [FULL NAME]", "Teleport to players; needs tool.", function(GotoUsername)
-Target = GotoUsername
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players[GotoUsername].Character.HumanoidRootPart.CFrame
-end)
-Tab1Section:NewTextBox("KillV2 [FULL NAME]", "Kill V2", function(Target)
-local plr = game.Players.LocalPlayer
-local TargetV2 = plr.Name
-local Player = function(Ev)
- if Ev == "" then
-  return nil
- elseif Ev == "random" then
-  return game:GetService("Players"):GetPlayers()[math.random(1, #game:GetService("Players"):GetPlayers())]
- else
-  for _, v in pairs(game:GetService("Players"):GetPlayers()) do
-   if v.Name:lower():sub(1, #Ev) == Ev:lower() or v.DisplayName:lower():sub(1, #Ev) == Ev then
-    return v
-   end
-  end
- end
-end
-
-local timeLeft = 3
-while true do
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players[Target].Character.HumanoidRootPart.CFrame
-local plr = game.Players.LocalPlayer
- local Character = workspace:WaitForChild(plr.Name)
- plr.Character.Humanoid:UnequipTools()
- local Humanoid = plr.Character.Humanoid:Clone()
- local TargetV2 = Player(TargetV2)
- local Tool = plr.Backpack:FindFirstChildOfClass("Tool")
-
- plr.Character.Animate.Disabled = true
- plr.Character.Humanoid:Destroy()
- Humanoid.Parent = plr.Character
- Tool.Parent = plr.Character
-    game.Players.LocalPlayer.Character.Humanoid:ChangeState(15)
- firetouchinterest(TargetV2.Character.HumanoidRootPart, Tool.Handle, 0);
-
-
-
-
-    plr.Character.Humanoid:UnequipTools()
-    local Humanoid = plr.Character.Humanoid:Clone()
-    local Tool = plr.Backpack:FindFirstChildOfClass("Tool")
-
-    plr.Character.Animate.Disabled = true
-    plr.Character.Humanoid:Destroy()
-    Humanoid.Parent = plr.Character
-    Tool.Parent = plr.Character
-    firetouchinterest(TargetV2.Character.HumanoidRootPart, Tool.Handle, 0); wait(0.1)
-    plr.Character.Humanoid.Health = 0
-    plr.Character = nil
-  
-   
-   plr.CharacterAdded:Wait()
-   plr.Character:WaitForChild("Humanoid")
-
-timeLeft = timeLeft - 1
-wait(1)
-if  timeLeft == 0 then
-print("script breaked")
- break
-end
-end
-
- local plr = game.Players.LocalPlayer
- local Character = workspace:WaitForChild(plr.Name)
- plr.Character.Humanoid:UnequipTools()
- local Humanoid = plr.Character.Humanoid:Clone()
- local TargetV2 = Player(TargetV2)
- local Tool = plr.Backpack:FindFirstChildOfClass("Tool")
-
- plr.Character.Animate.Disabled = true
- plr.Character.Humanoid:Destroy()
- Humanoid.Parent = plr.Character
- Tool.Parent = plr.Character
-    game.Players.LocalPlayer.Character.Humanoid:ChangeState(15)
- firetouchinterest(TargetV2.Character.HumanoidRootPart, Tool.Handle, 0);
-
-
-
-
-    plr.Character.Humanoid:UnequipTools()
-    local Humanoid = plr.Character.Humanoid:Clone()
-    local Tool = plr.Backpack:FindFirstChildOfClass("Tool")
-
-    plr.Character.Animate.Disabled = true
-    plr.Character.Humanoid:Destroy()
-    Humanoid.Parent = plr.Character
-    Tool.Parent = plr.Character
-    firetouchinterest(TargetV2.Character.HumanoidRootPart, Tool.Handle, 0); wait(0.1)
-    plr.Character.Humanoid.Health = 0
-    plr.Character = nil
-  
-   
-   plr.CharacterAdded:Wait()
-   plr.Character:WaitForChild("Humanoid")
-
-
-
-end)
-Tab1Section:NewTextBox("Bring", "Bring player", function(bring)
-
-Target = bring
-
-NOW = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-game.Players.LocalPlayer.Character.Humanoid.Name = 1
-local l = game.Players.LocalPlayer.Character["1"]:Clone()
-l.Parent = game.Players.LocalPlayer.Character
-l.Name = "Humanoid"
-wait()
-game.Players.LocalPlayer.Character["1"]:Destroy()
-game.Workspace.CurrentCamera.CameraSubject = game.Players.LocalPlayer.Character
-game.Players.LocalPlayer.Character.Animate.Disabled = true
-wait()
-game.Players.LocalPlayer.Character.Animate.Disabled = false
-game.Players.LocalPlayer.Character.Humanoid.DisplayDistanceType = "None"
-for i,v in pairs(game:GetService'Players'.LocalPlayer.Backpack:GetChildren())do
-game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
-end
-local function tp(player,player2)
-local char1,char2=player.Character,player2.Character
-if char1 and char2 then
-char1.HumanoidRootPart.CFrame = char2.HumanoidRootPart.CFrame
-end
-end
-local function getout(player,player2)
-local char1,char2=player.Character,player2.Character
-if char1 and char2 then
-char1:MoveTo(char2.Head.Position)
-end
-end
-tp(game.Players[Target], game.Players.LocalPlayer)
-wait()
-tp(game.Players[Target], game.Players.LocalPlayer)
-wait()
-getout(game.Players.LocalPlayer, game.Players[Target])
-wait()
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = NOW
-end)
-local Tab2 = Window:NewTab("Credits")
-local Tab2Section = Tab2:NewSection("Credits to vvmatthxw, thatsnotmatt#0984")
