@@ -1,5 +1,6 @@
-
-
+if getgenv().Aiming 
+then return getgenv().Aiming 
+end
 -- // Services
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
