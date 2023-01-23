@@ -1,4 +1,4 @@
-local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/RFS-cmd/-/main/model"))()
+getgenv().Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/RFS-cmd/-/main/model"))()
 Aiming.TeamCheck(false)
 
 local Workspace = game:GetService("Workspace")
