@@ -1,4 +1,3 @@
---why are you here
 if getgenv().Aiming 
 then return getgenv().Aiming 
 end
